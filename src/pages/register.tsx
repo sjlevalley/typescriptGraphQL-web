@@ -10,37 +10,32 @@ import {
 } from "@chakra-ui/react";
 import Wrapper from "../components/Wrapper";
 import { InputField } from "../components/inputField";
-import { useMutation } from "urql";
+import { useRegisterMutation } from "../generated/graphql";
+import { toErrorMap } from "../utils/toErrorMap";
+import { useRouter } from "next/router";
 
 interface registerProps {}
 
-const REGISTER_MUT = `
-mutation Register($username: String!, $password: String!) {
-  register(options: {username: $username, password: $password}) {
-    errors {
-      field
-      message
-    }
-    user {
-      id
-      createdAt
-      updatedAt
-      username
-    }
-  }
-}
-`;
-
 export const Register: React.FC<registerProps> = ({}) => {
-  const [{}, register] = useMutation(REGISTER_MUT);
+  const router = useRouter();
+  const [{}, register] = useRegisterMutation();
 
   return (
     <Wrapper variant="small">
       <Formik
         initialValues={{ username: "", password: "" }}
-        onSubmit={async (values) => {
+        onSubmit={async (values, { setErrors }) => {
           //const response = await register({ username: values.username, password: values.password });
           const response = await register(values);
+          if (response.data?.register.errors) {
+            // setErrors({
+            //   username: "Hey, I'm an error",
+            // });
+            setErrors(toErrorMap(response.data?.register.errors));
+          } else if (response.data?.register.user) {
+            // Should now be registered and have cookie showing in browser. Now navigate to next page
+            router.push("/");
+          }
         }}
       >
         {({ values, handleChange, isSubmitting }) => (
