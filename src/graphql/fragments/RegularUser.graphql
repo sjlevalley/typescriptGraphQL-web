@@ -1,0 +1,7 @@
+# Fragments are used when selecting/returning the same specific properties from a Class in multiple places of the app
+# For instance, we were returning id and username from the User class in multiple places, so we can create this fragment RegularUser to return those properties, so we don't have to change these properties in all the files if we want different properties back.
+
+fragment RegularUser on User {
+  id
+  username
+}

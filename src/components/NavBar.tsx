@@ -1,49 +1,46 @@
-import React from "react";
+import { Box, Button, Flex, Link } from "@chakra-ui/react";
 import NextLink from "next/link";
-import { Box, Link, Flex, Button, Heading } from "@chakra-ui/react";
+import React from "react";
+import { useMeQuery } from "../generated/graphql";
 
 interface NavBarProps {}
 
 export const NavBar: React.FC<NavBarProps> = ({}) => {
+  const [{ data, fetching }] = useMeQuery();
   let body = null;
 
   // data is loading
-  if (false) {
+  if (fetching) {
+    body = null;
+  } else if (!data?.me) {
+    // user not logged in
     body = (
       <>
         <NextLink href="/login">
-          <Link mr={2}>Login</Link>
+          <Link href="" mr={2}>
+            Login
+          </Link>
         </NextLink>
         <NextLink href="/register">
-          <Link>Register</Link>
+          <Link href="">Register</Link>
         </NextLink>
       </>
     );
-    // user is logged in
   } else {
+    // user logged in
     body = (
-      <Flex align="center">
-        <NextLink href="/create-post">
-          <Button as={Link} mr={4}>
-            create post
-          </Button>
-        </NextLink>
-        <Box mr={2}>{"Username"}</Box>
-        <Button variant="link">Logout</Button>
+      <Flex>
+        <Box>{data.me?.username}</Box>
+        <Button variant="link" ml={4}>
+          Logout
+        </Button>
       </Flex>
     );
   }
-
   return (
-    <Flex zIndex={1} position="sticky" top={0} bg="tan" p={4}>
-      <Flex flex={1} m="auto" align="center" maxW={800}>
-        <NextLink href="/">
-          <Link>
-            <Heading>LiReddit</Heading>
-          </Link>
-        </NextLink>
-        <Box ml={"auto"}>{body}</Box>
-      </Flex>
+    <Flex bg="tan" p={4}>
+      <Box ml="auto">{body}</Box>
     </Flex>
   );
 };
+export default NavBar;
