@@ -1,5 +1,6 @@
 import { Box, Button, Flex, Link } from "@chakra-ui/react";
 import NextLink from "next/link";
+import router from "next/router";
 import React from "react";
 import { useLogoutMutation, useMeQuery } from "../generated/graphql";
 import { isServer } from "../utils/isServer";
@@ -37,7 +38,10 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
       <Flex>
         <Box>{data.me?.username}</Box>
         <Button
-          onClick={() => logout({})}
+          onClick={() => {
+            logout({});
+            router.push("/login");
+          }}
           isLoading={logoutFetching}
           variant="link"
           ml={4}
