@@ -1,7 +1,7 @@
 import React, { InputHTMLAttributes } from "react";
 import { useField } from "formik";
 import {
-  Textarea,
+  // Textarea,
   FormControl,
   FormLabel,
   Input,
@@ -21,7 +21,7 @@ export const InputField: React.FC<InputFieldProps> = ({
   ...props
 }) => {
   // let InputOrTextarea = textarea ? Input : Textarea;
-  let InputOrTextarea = textarea ? Textarea : (Input as any);
+  let InputOrTextarea = Input;
 
   const [field, { error }] = useField(props);
   return (
