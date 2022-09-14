@@ -27,7 +27,11 @@ export const Login: React.FC<loginProps> = ({}) => {
             setErrors(toErrorMap(response.data?.login.errors));
           } else if (response.data?.login.user) {
             // Should now be registered and have cookie showing in browser. Now navigate to next page
-            router.push("/");
+            if (typeof router.query.next === "string") {
+              router.push(router.query.next);
+            } else {
+              router.push("/");
+            }
           }
         }}
       >
