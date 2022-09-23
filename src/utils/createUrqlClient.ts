@@ -38,7 +38,7 @@ const cursorPagination = (): Resolver => {
   return (_parent, fieldArgs, cache, info) => {
     const { parentKey: entityKey, fieldName } = info;
     const allFields = cache.inspectFields(entityKey);
-    console.log("Cursor Pagination: allFields", allFields);
+    // console.log("Cursor Pagination: allFields", allFields);
     const fieldInfos = allFields.filter((info) => info.fieldName === fieldName);
     const size = fieldInfos.length;
     if (size === 0) {
