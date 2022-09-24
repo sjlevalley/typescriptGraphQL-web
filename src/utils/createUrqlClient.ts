@@ -41,20 +41,22 @@ const cursorPagination = (): Resolver => {
     // console.log("Cursor Pagination: allFields", allFields);
     const fieldInfos = allFields.filter((info) => info.fieldName === fieldName);
     const size = fieldInfos.length;
+    console.log(size);
     if (size === 0) {
-      return undefined;
+      return [];
     }
 
     const fieldKey = `${fieldName}(${stringifyVariables(fieldArgs)})`;
+
     const isItInTheCache = cache.resolve(
-      cache.resolveFieldByKey(entityKey, fieldKey) as string,
+      cache.resolve(entityKey, fieldKey) as string,
       "posts"
     );
     info.partial = !isItInTheCache; // tells Urql that we did not fetch ALL of the data, so it will go back and get more
     let hasMore = true;
     const results: string[] = [];
     fieldInfos.forEach((fi) => {
-      const key = cache.resolveFieldByKey(entityKey, fi.fieldKey) as string;
+      const key = cache.resolve(entityKey, fi.fieldKey) as string;
       const data = cache.resolve(key, "posts") as string[];
       const _hasMore = cache.resolve(key, "hasMore");
       if (!_hasMore) {
@@ -80,9 +82,9 @@ export const createUrqlClient = (ssrExchange: any) => ({
     dedupExchange,
     cacheExchange({
       resolvers: {
-        Query: {
-          posts: cursorPagination(), // 'posts' has to match the name of what we have in GraphQL query
-        },
+        // Query: {
+        //   posts: cursorPagination(), // 'posts' has to match the name of what we have in GraphQL query
+        // },
       },
       updates: {
         // Updates the cache after logging in, logging out, or registering a user

@@ -27,9 +27,9 @@ const Index = () => {
   //   return <div>Oops! A problem occurred while fetching data.</div>;
   // }
 
-  console.log("Data: ", data);
-  console.log("Fetching: ", fetching);
-  console.log("Error: ", error);
+  // console.log("Data: ", data);
+  // console.log("Fetching: ", fetching);
+  // console.log("Error: ", error);
 
   return (
     <Layout>
@@ -58,7 +58,7 @@ const Index = () => {
             onClick={() =>
               setVariables({
                 limit: variables.limit,
-                cursor: data.posts[data.posts.length - 1].createdAt,
+                cursor: null,
               })
             }
             isLoading={fetching}
