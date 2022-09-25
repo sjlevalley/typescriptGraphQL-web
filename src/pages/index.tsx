@@ -27,6 +27,8 @@ const Index = () => {
     return <div>Oops! A problem occurred while fetching data.</div>;
   }
 
+  console.log(data!.posts.hasMore);
+
   return (
     <Layout>
       <Flex align="center">
