@@ -89,6 +89,7 @@ export const createUrqlClient = (ssrExchange: any) => ({
         // Updates the cache after logging in, logging out, or registering a user
         Mutation: {
           createPost: (_result, args, cache, info) => {
+            // allow posts to be invalidated even if they are only shown after the user clicks the 'load more'
             const allFields = cache.inspectFields("Query");
             const fieldInfos = allFields.filter(
               (info) => info.fieldName === "posts"
