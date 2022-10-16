@@ -1,11 +1,9 @@
 import { ChevronUpIcon, ChevronDownIcon } from "@chakra-ui/icons";
 import { Flex, IconButton } from "@chakra-ui/react";
+import { withUrqlClient } from "next-urql";
 import React, { useState } from "react";
-import {
-  PostSnippetFragment,
-  PostsQuery,
-  useVoteMutation,
-} from "../generated/graphql";
+import { PostSnippetFragment, useVoteMutation } from "../generated/graphql";
+import { createUrqlClient } from "../utils/createUrqlClient";
 
 interface UpdootSectionProps {
   post: PostSnippetFragment;
@@ -16,6 +14,7 @@ export const UpdootSection: React.FC<UpdootSectionProps> = ({ post }) => {
     "updoot-loading" | "downdoot-loading" | "not-loading"
   >("not-loading");
   const [, vote] = useVoteMutation(); // Alternative way to set loading state on upvote and downvote buttons
+
   return (
     <Flex direction="column" justifyContent="center" alignItems="center" mr={4}>
       <IconButton
@@ -51,4 +50,5 @@ export const UpdootSection: React.FC<UpdootSectionProps> = ({ post }) => {
     </Flex>
   );
 };
+
 export default UpdootSection;

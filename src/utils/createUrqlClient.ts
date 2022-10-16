@@ -72,11 +72,20 @@ export const cursorPagination = (): Resolver => {
   };
 };
 
-export const createUrqlClient = (ssrExchange: any) => {
+export const createUrqlClient = (ssrExchange: any, ctx: any) => {
+  let cookie = "";
+  if (isServer()) {
+    cookie = ctx?.req?.headers?.cookie;
+  }
   return {
     url: "http://localhost:4000/graphql",
     fetchOptions: {
       credentials: "include" as const,
+      header: cookie
+        ? {
+            cookie,
+          }
+        : undefined,
     },
     exchanges: [
       dedupExchange,
@@ -105,14 +114,14 @@ export const createUrqlClient = (ssrExchange: any) => {
                 { id: postId }
               );
               if (data) {
-                if (data.voteStatus === args.value) {
+                if (data.voteStatus === value) {
                   return;
                 }
                 const newPoints =
                   (data.points as number) + (!data.voteStatus ? 1 : 2) * value;
                 cache.writeFragment(
                   gql`
-                    fragment _ on Post {
+                    fragment __ on Post {
                       points
                       voteStatus
                     }
