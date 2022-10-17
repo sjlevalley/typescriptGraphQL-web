@@ -1,5 +1,5 @@
 import { stringifyVariables } from "@urql/core";
-import { cacheExchange, Resolver } from "@urql/exchange-graphcache";
+import { cacheExchange, Resolver, Cache } from "@urql/exchange-graphcache";
 import Router from "next/router";
 import { dedupExchange, Exchange, fetchExchange } from "urql";
 import { pipe, tap } from "wonka";
@@ -73,20 +73,28 @@ export const cursorPagination = (): Resolver => {
   };
 };
 
+const invalidateAllPosts = (cache: Cache) => {
+  const allFields = cache.inspectFields("Query");
+  const fieldInfos = allFields.filter((info) => info.fieldName === "posts");
+  fieldInfos.forEach((fi) => {
+    cache.invalidate("Query", "posts", fi.arguments || {});
+  });
+};
+
 export const createUrqlClient = (ssrExchange: any, ctx: any) => {
-  let cookie = "";
-  if (isServer()) {
-    cookie = ctx?.req?.headers?.cookie;
-  }
+  // let cookie = "";
+  // if (isServer()) {
+  //   cookie = ctx?.req?.headers?.cookie;
+  // }
   return {
     url: "http://localhost:4000/graphql",
     fetchOptions: {
       credentials: "include" as const,
-      header: cookie
-        ? {
-            cookie,
-          }
-        : undefined,
+      // header: cookie
+      //   ? {
+      //       cookie,
+      //     }
+      //   : undefined,
     },
     exchanges: [
       dedupExchange,
@@ -139,13 +147,7 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
             },
             createPost: (_result, args, cache, info) => {
               // allow posts to be invalidated even if they are only shown after the user clicks the 'load more'
-              const allFields = cache.inspectFields("Query");
-              const fieldInfos = allFields.filter(
-                (info) => info.fieldName === "posts"
-              );
-              fieldInfos.forEach((fi) => {
-                cache.invalidate("Query", "posts", fi.arguments || {});
-              });
+              invalidateAllPosts(cache);
             },
             logout: (_result, args, cache, info) => {
               betterUpdateQuery<LogoutMutation, MeQuery>(
@@ -170,6 +172,7 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
                   }
                 }
               );
+              invalidateAllPosts(cache);
             },
             register: (_result, args, cache, info) => {
               betterUpdateQuery<RegisterMutation, MeQuery>(

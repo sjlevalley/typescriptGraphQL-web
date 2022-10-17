@@ -26,6 +26,7 @@ import {
   EditIcon,
 } from "@chakra-ui/icons";
 import UpdootSection from "../components/UpdootSection";
+import { EditDeletePostButtons } from "../components/editDeletePostButtons";
 
 const Index = () => {
   const [variables, setVariables] = useState({
@@ -39,7 +40,12 @@ const Index = () => {
   const [{ data: loggedInUser }] = useMeQuery();
 
   if (!data && !fetching) {
-    return <div>Oops! A problem occurred while fetching data.</div>;
+    return (
+      <div>
+        <div>Oops! A problem occurred while fetching data.</div>
+        <div>{error?.message}</div>
+      </div>
+    );
   }
 
   return (
@@ -65,7 +71,11 @@ const Index = () => {
                     </Text>
                     {loggedInUser?.me?.id === p.creator.id && (
                       <Box ml="auto">
-                        <NextLink
+                        <EditDeletePostButtons
+                          id={p?.id}
+                          creatorId={p?.creator?.id}
+                        />
+                        {/* <NextLink
                           href="/post/edit/[id]"
                           as={`/post/edit/${p.id}`}
                         >
@@ -82,7 +92,7 @@ const Index = () => {
                           onClick={() => {
                             deletePost({ id: p.id });
                           }}
-                        />
+                        /> */}
                       </Box>
                     )}
                   </Flex>
