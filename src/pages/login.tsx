@@ -1,20 +1,19 @@
-import React from "react";
-import { Formik, Form } from "formik";
 import { Box, Button, Flex, Link } from "@chakra-ui/react";
-import Wrapper from "../components/Wrapper";
-import { InputField } from "../components/inputField";
-import { useLoginMutation } from "../generated/graphql";
-import { withUrqlClient } from "next-urql";
-import { createUrqlClient } from "../utils/createUrqlClient";
-import { toErrorMap } from "../utils/toErrorMap";
-import { useRouter } from "next/router";
+import { Form, Formik } from "formik";
 import NextLink from "next/link";
+import { useRouter } from "next/router";
+import React from "react";
+import { InputField } from "../components/inputField";
+import Wrapper from "../components/Wrapper";
+import { MeDocument, MeQuery, useLoginMutation } from "../generated/graphql";
+import { toErrorMap } from "../utils/toErrorMap";
+import { withApollo } from "../utils/withApollo";
 
 interface loginProps {}
 
 export const Login: React.FC<loginProps> = ({}) => {
   const router = useRouter();
-  const [{}, login] = useLoginMutation();
+  const [login] = useLoginMutation();
 
   return (
     <Wrapper variant="small">
@@ -22,7 +21,19 @@ export const Login: React.FC<loginProps> = ({}) => {
         initialValues={{ usernameOrEmail: "", password: "" }}
         onSubmit={async (values, { setErrors }) => {
           //const response = await register({ username: values.username, password: values.password });
-          const response = await login(values);
+          const response = await login({
+            variables: values,
+            update: (cache, { data }) => {
+              cache.writeQuery<MeQuery>({
+                query: MeDocument,
+                data: {
+                  __typename: "Query",
+                  me: data?.login.user,
+                },
+              });
+              cache.evict({ fieldName: "posts:{}" });
+            },
+          });
           if (response.data?.login.errors) {
             setErrors(toErrorMap(response.data?.login.errors));
           } else if (response.data?.login.user) {
@@ -67,4 +78,4 @@ export const Login: React.FC<loginProps> = ({}) => {
   );
 };
 
-export default withUrqlClient(createUrqlClient)(Login);
+export default withApollo({ ssr: false })(Login);

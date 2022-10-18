@@ -82,19 +82,19 @@ const invalidateAllPosts = (cache: Cache) => {
 };
 
 export const createUrqlClient = (ssrExchange: any, ctx: any) => {
-  // let cookie = "";
-  // if (isServer()) {
-  //   cookie = ctx?.req?.headers?.cookie;
-  // }
+  let cookie = "";
+  if (isServer()) {
+    cookie = ctx?.req?.headers?.cookie;
+  }
   return {
     url: "http://localhost:4000/graphql",
     fetchOptions: {
       credentials: "include" as const,
-      // header: cookie
-      //   ? {
-      //       cookie,
-      //     }
-      //   : undefined,
+      header: cookie
+        ? {
+            cookie,
+          }
+        : undefined,
     },
     exchanges: [
       dedupExchange,
@@ -126,7 +126,7 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
                     voteStatus
                   }
                 `,
-                { id: postId }
+                { id: postId } as any
               );
               if (data) {
                 if (data.voteStatus === value) {
