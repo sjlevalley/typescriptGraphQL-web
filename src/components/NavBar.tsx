@@ -1,14 +1,14 @@
 import { useApolloClient } from "@apollo/client";
 import { Box, Button, Flex, Heading, Link } from "@chakra-ui/react";
 import NextLink from "next/link";
-import { useRouter } from "next/router";
+// import { useRouter } from "next/router";
 import React, { useState, useEffect } from "react";
 import { useLogoutMutation, useMeQuery } from "../generated/graphql";
 
 interface NavBarProps {}
 
 export const NavBar: React.FC<NavBarProps> = ({}) => {
-  const router = useRouter();
+  // const router = useRouter();
   const [isServer, setIsServer] = useState(true);
   const [logout, { loading: logoutFetching }] = useLogoutMutation();
   const apolloClient = useApolloClient();
@@ -27,7 +27,7 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
     body = (
       <>
         <NextLink href="/login">
-          <Link href="" mr={2}>
+          <Link href="" mr={4}>
             Login
           </Link>
         </NextLink>
@@ -41,11 +41,10 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
     body = (
       <Flex align="center">
         <NextLink href="/create-post">
-          <Button as={Link} mr={4}>
-            Create Post{" "}
+          <Button size="sm" as={Link} mr={4}>
+            Create Post
           </Button>
         </NextLink>
-        <Box>{data.me?.username}</Box>
         <Button
           onClick={async () => {
             await logout({});
@@ -53,19 +52,24 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
           }}
           isLoading={logoutFetching}
           variant="link"
-          ml={4}
+          mr={4}
         >
           Logout
         </Button>
+        <NextLink href="/">
+          <Link>
+            <Box>{data.me?.username}</Box>
+          </Link>
+        </NextLink>
       </Flex>
     );
   }
   return (
     <Flex zIndex={1} position="sticky" top={0} bg="tan" p={4}>
-      <Flex flex={1} margin="auto" align="center" maxW={800}>
+      <Flex flex={1} margin="auto" align="center" maxW={1000}>
         <NextLink href="/">
           <Link>
-            <Heading>LiReddit</Heading>
+            <Heading size="lg">Reddit-ish</Heading>
           </Link>
         </NextLink>
         <Box ml="auto">{body}</Box>

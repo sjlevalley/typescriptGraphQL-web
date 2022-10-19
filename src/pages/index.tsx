@@ -46,7 +46,7 @@ const Index = () => {
                 <Box flex={1}>
                   <NextLink href={"/post/[id]"} as={`/post/${p.id}`}>
                     <Link>
-                      <Heading fontSize="xl">{p.title}</Heading>
+                      <Heading fontSize="lg">{p.title}</Heading>
                     </Link>
                   </NextLink>
                   <Text>Posted By: {p.creator.username}</Text>

@@ -34,6 +34,18 @@ const updateAfterVote = (
   });
   if (data) {
     if (data.voteStatus === value) {
+      const newPoints =
+        (data.points as number) + (data.voteStatus === 1 ? -1 : 1);
+      cache.writeFragment({
+        id: "Post:" + postId,
+        fragment: gql`
+          fragment __ on Post {
+            points
+            voteStatus
+          }
+        `,
+        data: { points: newPoints, voteStatus: null },
+      });
       return;
     }
     const newPoints =
@@ -58,10 +70,16 @@ export const UpdootSection: React.FC<UpdootSectionProps> = ({ post }) => {
   const [vote] = useVoteMutation(); // Alternative way to set loading state on upvote and downvote buttons
 
   return (
-    <Flex direction="column" justifyContent="center" alignItems="center" mr={4}>
+    <Flex direction="column" justifyContent="center" alignItems="center" mr={8}>
       <IconButton
         onClick={async () => {
           if (post.voteStatus === 1) {
+            setLoadingState("updoot-loading");
+            await vote({
+              variables: { postId: post.id, value: 1 },
+              update: (cache) => updateAfterVote(1, post.id, cache),
+            });
+            setLoadingState("not-loading");
             return;
           }
           setLoadingState("updoot-loading");
@@ -82,6 +100,12 @@ export const UpdootSection: React.FC<UpdootSectionProps> = ({ post }) => {
       <IconButton
         onClick={async () => {
           if (post.voteStatus === -1) {
+            setLoadingState("downdoot-loading");
+            await vote({
+              variables: { postId: post.id, value: -1 },
+              update: (cache) => updateAfterVote(-1, post.id, cache),
+            });
+            setLoadingState("not-loading");
             return;
           }
           setLoadingState("downdoot-loading");
