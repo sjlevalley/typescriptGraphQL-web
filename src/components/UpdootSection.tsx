@@ -32,13 +32,13 @@ const updateAfterVote = (
       }
     `,
   });
-
   if (data) {
     if (data.voteStatus === value) {
       return;
     }
     const newPoints =
       (data.points as number) + (!data.voteStatus ? 1 : 2) * value;
+    console.log("NEW POINTS", newPoints);
     cache.writeFragment({
       id: "Post:" + postId,
       fragment: gql`
@@ -72,6 +72,7 @@ export const UpdootSection: React.FC<UpdootSectionProps> = ({ post }) => {
           });
           setLoadingState("not-loading");
         }}
+        size={"sm"}
         colorScheme={post.voteStatus === 1 ? "green" : undefined}
         isLoading={loadingState === "updoot-loading"}
         icon={<ChevronUpIcon boxSize={8} />}
@@ -91,7 +92,8 @@ export const UpdootSection: React.FC<UpdootSectionProps> = ({ post }) => {
           });
           setLoadingState("not-loading");
         }}
-        colorScheme={post.voteStatus === 1 ? "red" : undefined}
+        size={"sm"}
+        colorScheme={post.voteStatus === -1 ? "red" : undefined}
         isLoading={loadingState === "downdoot-loading"}
         icon={<ChevronDownIcon boxSize={8} />}
         aria-label="Downvote"
