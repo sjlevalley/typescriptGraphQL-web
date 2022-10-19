@@ -38,7 +38,6 @@ const updateAfterVote = (
     }
     const newPoints =
       (data.points as number) + (!data.voteStatus ? 1 : 2) * value;
-    console.log("NEW POINTS", newPoints);
     cache.writeFragment({
       id: "Post:" + postId,
       fragment: gql`
