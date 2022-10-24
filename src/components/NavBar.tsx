@@ -1,6 +1,7 @@
 import { useApolloClient } from "@apollo/client";
 import { Box, Button, Flex, Heading, Link } from "@chakra-ui/react";
 import NextLink from "next/link";
+import { useRouter } from "next/router";
 // import { useRouter } from "next/router";
 import React, { useState, useEffect } from "react";
 import { useLogoutMutation, useMeQuery } from "../generated/graphql";
@@ -8,7 +9,8 @@ import { useLogoutMutation, useMeQuery } from "../generated/graphql";
 interface NavBarProps {}
 
 export const NavBar: React.FC<NavBarProps> = ({}) => {
-  // const router = useRouter();
+  const router = useRouter();
+  console.log("ROUTER", router);
   const [isServer, setIsServer] = useState(true);
   const [logout, { loading: logoutFetching }] = useLogoutMutation();
   const apolloClient = useApolloClient();
@@ -26,14 +28,18 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
     // user not logged in
     body = (
       <>
-        <NextLink href="/login">
-          <Link href="" mr={4}>
-            Login
-          </Link>
-        </NextLink>
-        <NextLink href="/register">
-          <Link href="">Register</Link>
-        </NextLink>
+        {router.pathname !== "/login" && (
+          <NextLink href="/login">
+            <Link href="" mr={4}>
+              Login
+            </Link>
+          </NextLink>
+        )}
+        {router.pathname !== "/register" && (
+          <NextLink href="/register">
+            <Link href="">Register</Link>
+          </NextLink>
+        )}
       </>
     );
   } else {
