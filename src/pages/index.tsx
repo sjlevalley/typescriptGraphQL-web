@@ -10,7 +10,7 @@ import {
 import NextLink from "next/link";
 import { EditDeletePostButtons } from "../components/editDeletePostButtons";
 import Layout from "../components/Layout";
-import UpdootSection from "../components/UpdootSection";
+import VoteSection from "../components/VoteSection";
 import { useMeQuery, usePostsQuery } from "../generated/graphql";
 import { withApollo } from "../utils/withApollo";
 
@@ -42,7 +42,7 @@ const Index = () => {
           {data?.posts.posts.map((p) =>
             !p ? null : (
               <Flex key={p.id} p={5} shadow="md" borderWidth="1px">
-                <UpdootSection post={p} />
+                <VoteSection post={p} />
                 <Box flex={1}>
                   <NextLink href={"/post/[id]"} as={`/post/${p.id}`}>
                     <Link>

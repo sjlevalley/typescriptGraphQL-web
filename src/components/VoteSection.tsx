@@ -9,7 +9,7 @@ import {
   VoteMutation,
 } from "../generated/graphql";
 
-interface UpdootSectionProps {
+interface VoteSectionProps {
   post: PostSnippetFragment;
 }
 
@@ -63,9 +63,9 @@ const updateAfterVote = (
   }
 };
 
-export const UpdootSection: React.FC<UpdootSectionProps> = ({ post }) => {
+export const VoteSection: React.FC<VoteSectionProps> = ({ post }) => {
   const [loadingState, setLoadingState] = useState<
-    "updoot-loading" | "downdoot-loading" | "not-loading"
+    "vote-loading" | "downdoot-loading" | "not-loading"
   >("not-loading");
   const [vote] = useVoteMutation(); // Alternative way to set loading state on upvote and downvote buttons
 
@@ -74,7 +74,7 @@ export const UpdootSection: React.FC<UpdootSectionProps> = ({ post }) => {
       <IconButton
         onClick={async () => {
           if (post.voteStatus === 1) {
-            setLoadingState("updoot-loading");
+            setLoadingState("vote-loading");
             await vote({
               variables: { postId: post.id, value: 1 },
               update: (cache) => updateAfterVote(1, post.id, cache),
@@ -82,7 +82,7 @@ export const UpdootSection: React.FC<UpdootSectionProps> = ({ post }) => {
             setLoadingState("not-loading");
             return;
           }
-          setLoadingState("updoot-loading");
+          setLoadingState("vote-loading");
           await vote({
             variables: { postId: post.id, value: 1 },
             update: (cache) => updateAfterVote(1, post.id, cache),
@@ -91,7 +91,7 @@ export const UpdootSection: React.FC<UpdootSectionProps> = ({ post }) => {
         }}
         size={"sm"}
         colorScheme={post.voteStatus === 1 ? "green" : undefined}
-        isLoading={loadingState === "updoot-loading"}
+        isLoading={loadingState === "vote-loading"}
         icon={<ChevronUpIcon boxSize={8} />}
         aria-label="Upvote"
       />
@@ -125,4 +125,4 @@ export const UpdootSection: React.FC<UpdootSectionProps> = ({ post }) => {
   );
 };
 
-export default UpdootSection;
+export default VoteSection;
