@@ -1,10 +1,12 @@
+import { useEffect } from "react";
 import { ApolloCache } from "@apollo/client";
 import { ChevronDownIcon, ChevronUpIcon } from "@chakra-ui/icons";
-import { Flex, IconButton } from "@chakra-ui/react";
+import { Flex, IconButton, Tooltip } from "@chakra-ui/react";
 import gql from "graphql-tag";
 import React, { useState } from "react";
 import {
   PostSnippetFragment,
+  useMeQuery,
   useVoteMutation,
   VoteMutation,
 } from "../generated/graphql";
@@ -64,64 +66,82 @@ const updateAfterVote = (
 };
 
 export const VoteSection: React.FC<VoteSectionProps> = ({ post }) => {
+  const [isServer, setIsServer] = useState(true);
   const [loadingState, setLoadingState] = useState<
     "vote-loading" | "downdoot-loading" | "not-loading"
   >("not-loading");
   const [vote] = useVoteMutation(); // Alternative way to set loading state on upvote and downvote buttons
+  const { data, loading } = useMeQuery({
+    skip: isServer,
+  });
+
+  useEffect(() => setIsServer(false), []);
+
+  console.log("USER", data?.me);
 
   return (
-    <Flex direction="column" justifyContent="center" alignItems="center" mr={8}>
-      <IconButton
-        onClick={async () => {
-          if (post.voteStatus === 1) {
+    <Tooltip label={!data?.me && "Must be Logged in to Vote"}>
+      <Flex
+        direction="column"
+        justifyContent="center"
+        alignItems="center"
+        mr={8}
+      >
+        <IconButton
+          disabled={!data?.me}
+          onClick={async () => {
+            if (post.voteStatus === 1) {
+              setLoadingState("vote-loading");
+              await vote({
+                variables: { postId: post.id, value: 1 },
+                update: (cache) => updateAfterVote(1, post.id, cache),
+              });
+              setLoadingState("not-loading");
+              return;
+            }
             setLoadingState("vote-loading");
             await vote({
               variables: { postId: post.id, value: 1 },
               update: (cache) => updateAfterVote(1, post.id, cache),
             });
             setLoadingState("not-loading");
-            return;
-          }
-          setLoadingState("vote-loading");
-          await vote({
-            variables: { postId: post.id, value: 1 },
-            update: (cache) => updateAfterVote(1, post.id, cache),
-          });
-          setLoadingState("not-loading");
-        }}
-        size={"sm"}
-        colorScheme={post.voteStatus === 1 ? "green" : undefined}
-        isLoading={loadingState === "vote-loading"}
-        icon={<ChevronUpIcon boxSize={8} />}
-        aria-label="Upvote"
-      />
-
-      {post.points}
-      <IconButton
-        onClick={async () => {
-          if (post.voteStatus === -1) {
+          }}
+          size={"sm"}
+          colorScheme={post.voteStatus === 1 ? "green" : undefined}
+          isLoading={loadingState === "vote-loading"}
+          icon={<ChevronUpIcon boxSize={8} />}
+          aria-label="Upvote"
+        />
+        {/* </Tooltip> */}
+        {post.points}
+        {/* <Tooltip label={!data?.me && "Must be Logged in to Vote"}> */}
+        <IconButton
+          disabled={!data?.me}
+          onClick={async () => {
+            if (post.voteStatus === -1) {
+              setLoadingState("downdoot-loading");
+              await vote({
+                variables: { postId: post.id, value: -1 },
+                update: (cache) => updateAfterVote(-1, post.id, cache),
+              });
+              setLoadingState("not-loading");
+              return;
+            }
             setLoadingState("downdoot-loading");
             await vote({
               variables: { postId: post.id, value: -1 },
               update: (cache) => updateAfterVote(-1, post.id, cache),
             });
             setLoadingState("not-loading");
-            return;
-          }
-          setLoadingState("downdoot-loading");
-          await vote({
-            variables: { postId: post.id, value: -1 },
-            update: (cache) => updateAfterVote(-1, post.id, cache),
-          });
-          setLoadingState("not-loading");
-        }}
-        size={"sm"}
-        colorScheme={post.voteStatus === -1 ? "red" : undefined}
-        isLoading={loadingState === "downdoot-loading"}
-        icon={<ChevronDownIcon boxSize={8} />}
-        aria-label="Downvote"
-      />
-    </Flex>
+          }}
+          size={"sm"}
+          colorScheme={post.voteStatus === -1 ? "red" : undefined}
+          isLoading={loadingState === "downdoot-loading"}
+          icon={<ChevronDownIcon boxSize={8} />}
+          aria-label="Downvote"
+        />
+      </Flex>
+    </Tooltip>
   );
 };
 
