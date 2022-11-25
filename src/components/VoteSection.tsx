@@ -71,13 +71,11 @@ export const VoteSection: React.FC<VoteSectionProps> = ({ post }) => {
     "vote-loading" | "downdoot-loading" | "not-loading"
   >("not-loading");
   const [vote] = useVoteMutation(); // Alternative way to set loading state on upvote and downvote buttons
-  const { data, loading } = useMeQuery({
+  const { data } = useMeQuery({
     skip: isServer,
   });
 
   useEffect(() => setIsServer(false), []);
-
-  console.log("USER", data?.me);
 
   return (
     <Tooltip label={!data?.me && "Must be Logged in to Vote"}>
