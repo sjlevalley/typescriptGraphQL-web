@@ -62,7 +62,7 @@ export const EditPost = ({}) => {
               />
             </Box>
             <Button mt={4} type="submit" isLoading={isSubmitting}>
-              Edit Post
+              Submit Changes
             </Button>
           </Form>
         )}
