@@ -16,7 +16,7 @@ const CreatePost: React.FC<{}> = ({}) => {
     <Layout variant="regular">
       <Formik
         initialValues={{ title: "", text: "" }}
-        onSubmit={async (values, { setErrors }) => {
+        onSubmit={async (values, {}) => {
           const { errors } = await createPost({
             variables: { input: values },
             update: (cache) => {
@@ -28,7 +28,7 @@ const CreatePost: React.FC<{}> = ({}) => {
           router.push("/");
         }}
       >
-        {({ values, handleChange, isSubmitting }) => (
+        {({ isSubmitting }) => (
           <Form>
             <InputField
               name="title"

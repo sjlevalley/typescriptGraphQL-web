@@ -48,7 +48,7 @@ export const Login: React.FC<loginProps> = ({}) => {
             }
           }}
         >
-          {({ values, handleChange, isSubmitting }) => (
+          {({ isSubmitting }) => (
             <Form>
               <InputField
                 name="usernameOrEmail"

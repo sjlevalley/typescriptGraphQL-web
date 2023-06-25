@@ -1,6 +1,4 @@
 import React, { useState } from "react";
-import { withUrqlClient } from "next-urql";
-import { createUrqlClient } from "../utils/createUrqlClient";
 import { Flex, Button, Box, Link } from "@chakra-ui/react";
 import { Formik, Form } from "formik";
 import NextLink from "next/link";

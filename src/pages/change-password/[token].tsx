@@ -54,7 +54,7 @@ const ChangePassword: NextPage = () => {
           }
         }}
       >
-        {({ values, handleChange, isSubmitting }) => (
+        {({ isSubmitting }) => (
           <Form>
             <InputField
               name="newPassword"
