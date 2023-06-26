@@ -1,13 +1,16 @@
-FROM node:14.18.0
+FROM node:14.18.0 as BUILD_IMAGE
 
-WORKDIR /
+WORKDIR /app
 
-COPY package.json .
-COPY package-lock.json .
-COPY . .
+COPY package*.json .
 RUN npm install
 
+FROM node:alpine as main
 
+COPY --from=BUILD_IMAGE /app /
+
+
+COPY . .
 # Bundle app source
 RUN npm run build 
 
